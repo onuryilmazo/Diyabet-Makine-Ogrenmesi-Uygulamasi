@@ -26,8 +26,6 @@ class Infos(BaseModel):
 
 
 
-
-
 def get_r1(dict_):
     if (int(dict_.get('age'))<=30) and (int(dict_.get('glucose'))<=120):
         return 0
@@ -106,6 +104,8 @@ def get_r10(dict_):
         return 0
     else:
         return 1
+'''
+ZERO DIVISION ERROR 
 
 def get_r11_r12_r13_r14_r15(dict_):
 
@@ -120,6 +120,37 @@ def get_r11_r12_r13_r14_r15(dict_):
         r15= 1
     
     return r11,r12,r13,r14,r15
+'''
+
+def get_r11_r12_r13_r14_r15(dict_):
+    try:
+        r11 = float(dict_.get('bmi')) * int(dict_.get('skin_thickness'))
+    except (ValueError, TypeError):
+        r11 = 0
+    
+    try:
+        r12 = int(dict_.get('pregnancies')) / int(dict_.get('age')) if int(dict_.get('age')) != 0 else 0
+    except (ValueError, TypeError):
+        r12 = 0
+
+    diabetes_pedigree_function = dict_.get('diabetes_pedigree_function')
+    try:
+        if diabetes_pedigree_function != 0:
+            r13 = int(dict_.get('glucose')) / diabetes_pedigree_function
+            r14 = int(dict_.get('age')) * diabetes_pedigree_function
+        else:
+            r13 = 0
+            r14 = 0
+    except (ValueError, TypeError):
+        r13 = 0
+        r14 = 0
+    
+    if r11 < 1034:
+        r15 = 0
+    else:
+        r15 = 1
+    
+    return r11, r12, r13, r14, r15
 
 def predict_pipeline(dict_):
     to_predict = []
